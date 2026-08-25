@@ -2,9 +2,9 @@ from pathlib import Path
 import pandas as pd
 
 def readDatabase(year, place,quali):
- arquivo = Path(__file__).parent / "silver" /f'year={year}'/f'place={place}'/f'quali={quali}'
- caminho_final1 = arquivo / f'dados_fastf1_{place}_{year}.parquet'
- df = pd.read_parquet(caminho_final1,engine ='fastparquet')
+ caminho = Path(__file__).parent / "bronze" /f'year={year}'/f'place={place}'/f'quali={quali}'
+ arquivo = caminho / f'dados_fastf1_{place}_{year}.parquet'
+ df = pd.read_parquet(arquivo,engine ='fastparquet')
 
  return df
 def transformData(df):
@@ -61,12 +61,12 @@ def transformData(df):
     return df
 def savingData_Silver(year,place,quali):
    try:
-    arquivo = Path(__file__).parent / "silver" /f'year={year}'/f'place={place}'/f'quali={quali}'
-    arquivo.mkdir(parents=True,exist_ok=True)
+    caminho = Path(__file__).parent / "silver" /f'year={year}'/f'place={place}'/f'quali={quali}'
+    caminho.mkdir(parents=True,exist_ok=True)
     dados = readDatabase(year, place, quali)
     dataTransfrom = transformData(dados)
-    caminhofinal = arquivo / f'dados_fastf1_{place}_{year}.parquet'
-    dataTransfrom.to_parquet(caminhofinal,index = False)
+    arquivo = caminho / f'dados_silver_{place}_{year}.parquet'
+    dataTransfrom.to_parquet(arquivo,index = False)
    except ValueError:
       print('Erro ao tentar salvar')
 
