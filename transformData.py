@@ -2,12 +2,52 @@ from pathlib import Path
 import pandas as pd
 
 def readDatabase(year, place,quali):
- caminho = Path(__file__).parent / "bronze" /f'year={year}'/f'place={place}'/f'quali={quali}'
- arquivo = caminho / f'dados_fastf1_{place}_{year}.parquet'
- df = pd.read_parquet(arquivo,engine ='fastparquet')
 
- return df
-def transformData(df):
+ caminho = Path(__file__).parent / "bronze" / "telemetry" /f"year={year}" /f"place={place}" /f"quali={quali}"
+ caminho2 = Path(__file__).parent / "bronze" / "Data_Laps" /f"year={year}" /f"place={place}" /f"quali={quali}"
+ arquivo = caminho / f'dados_fastf1_{place}_{year}.parquet'
+ arquivo2 = caminho2 / f'dados_voltas_{place}_{year}.parquet'
+ df = pd.read_parquet(arquivo,engine ='fastparquet')
+ df2 = pd.read_parquet(arquivo2,engine = 'fastparquet')
+
+ return df,df2
+
+def transformDataVoltas(df2):
+  df2 = df2[df2['IsAccurate']]
+  df2.rename(columns={
+        'Time': 'Tempo',
+        'Driver': 'Piloto',                
+        'DriverNumber': 'Numero_Piloto',
+        'LapTime': 'Tempo_Volta',
+        'LapNumber': 'Numero_Volta',
+        'Stint': 'Turno_Pneu',
+        'PitOutTime': 'Tempo_Saida_Pit',
+        'PitInTime': 'Tempo_Entrada_Pit',
+        'Sector1Time': 'Tempo_Setor_1',
+        'Sector2Time': 'Tempo_Setor_2',
+        'Sector3Time': 'Tempo_Setor_3',
+        'FreshTyre': 'Pneu_Novo',
+        'Team': 'Equipe',
+        'LapStartTime': 'Tempo_Inicio_Volta',
+        'LapStartDate': 'Data_Inicio_Volta',
+        'TrackStatus': 'Status_Pista',
+        'Position': 'Posicao',
+        'Deleted': 'Volta_Deletada',
+        'DeletedReason': 'Motivo_Deletar',
+        'IsAccurate': 'Volta_Precisa'
+        },inplace=True)
+                        
+  df2.drop(columns=[
+  'Position',
+  'FastF1Generated'
+   ],
+   inplace =True,
+   errors = 'ignore') 
+       # Adicionado inplace=True para aplicar as mudanças diretamente
+
+  return df2
+
+def transformDataTelemetria(df):
 
     # Arredondamento dos valores
     df['RPM'] = df['RPM'].round(1)
@@ -61,13 +101,20 @@ def transformData(df):
     return df
 def savingData_Silver(year,place,quali):
    try:
-    caminho = Path(__file__).parent / "silver" /f'year={year}'/f'place={place}'/f'quali={quali}'
+    caminho = Path(__file__).parent / "silver" /"telemetry" /f'year={year}'/f'place={place}'/f'quali={quali}'
+    caminho2 = Path(__file__).parent / "silver" / "Data_Laps" /f"year={year}" /f"place={place}" /f"quali={quali}" 
     caminho.mkdir(parents=True,exist_ok=True)
-    dados = readDatabase(year, place, quali)
-    dataTransfrom = transformData(dados)
+    caminho2.mkdir(parents=True,exist_ok=True)
+    telemetry, Laps = readDatabase(year, place, quali)
+    dataTransform = transformDataTelemetria(telemetry)
+    dataTransform2 = transformDataVoltas(Laps)
     arquivo = caminho / f'dados_silver_{place}_{year}.parquet'
-    dataTransfrom.to_parquet(arquivo,index = False)
-   except ValueError:
-      print('Erro ao tentar salvar')
+    arquivo2 = caminho2 / f'dados_silver_{place}_{year}.parquet'
+    dataTransform.to_parquet(arquivo,index = False)
+    dataTransform2.to_parquet(arquivo2,index = False)
+   except FileNotFoundError:
+      print('Erro ao tentar salvar dados da telemtria')
+
+
 
 savingData_Silver(2025, 'monaco','Q')
