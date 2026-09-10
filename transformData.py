@@ -14,6 +14,16 @@ def readDatabase(year, place,quali):
 
 def transformDataVoltas(df2):
   df2 = df2[df2['IsAccurate']]
+
+  df2['LapTime'] = (
+  df2['LapTime'] / 1_000_000_000).round(3)
+
+  df2['Sector1Time'] =( df2['Sector1Time'] / 1_000_000_000).round(3)
+
+  df2['Sector2Time'] =( df2['Sector2Time'] / 1_000_000_000).round(3)
+
+  df2['Sector3Time'] =( df2['Sector3Time'] / 1_000_000_000).round(3)
+
   df2.rename(columns={
         'Time': 'Tempo',
         'Driver': 'Piloto',                
@@ -21,8 +31,6 @@ def transformDataVoltas(df2):
         'LapTime': 'Tempo_Volta',
         'LapNumber': 'Numero_Volta',
         'Stint': 'Turno_Pneu',
-        'PitOutTime': 'Tempo_Saida_Pit',
-        'PitInTime': 'Tempo_Entrada_Pit',
         'Sector1Time': 'Tempo_Setor_1',
         'Sector2Time': 'Tempo_Setor_2',
         'Sector3Time': 'Tempo_Setor_3',
@@ -31,13 +39,14 @@ def transformDataVoltas(df2):
         'LapStartTime': 'Tempo_Inicio_Volta',
         'LapStartDate': 'Data_Inicio_Volta',
         'TrackStatus': 'Status_Pista',
-        'Position': 'Posicao',
-        'Deleted': 'Volta_Deletada',
-        'DeletedReason': 'Motivo_Deletar',
         'IsAccurate': 'Volta_Precisa'
         },inplace=True)
                         
   df2.drop(columns=[
+  'PitInTime', 
+  'PitOutTime',
+  'DeletedReason',
+  'Deleted', 
   'Position',
   'FastF1Generated'
    ],
