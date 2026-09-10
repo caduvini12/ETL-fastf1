@@ -1,7 +1,7 @@
 from pathlib import Path
 import pandas as pd
 
-def readDatabase(year, place,quali):
+def readDatabaseBronze(year, place,quali):
 
  caminho = Path(__file__).parent / "bronze" / "telemetry" /f"year={year}" /f"place={place}" /f"quali={quali}"
  caminho2 = Path(__file__).parent / "bronze" / "Data_Laps" /f"year={year}" /f"place={place}" /f"quali={quali}"
@@ -114,7 +114,7 @@ def savingData_Silver(year,place,quali):
     caminho2 = Path(__file__).parent / "silver" / "Data_Laps" /f"year={year}" /f"place={place}" /f"quali={quali}" 
     caminho.mkdir(parents=True,exist_ok=True)
     caminho2.mkdir(parents=True,exist_ok=True)
-    telemetry, Laps = readDatabase(year, place, quali)
+    telemetry, Laps = readDatabaseBronze(year, place, quali)
     dataTransform = transformDataTelemetria(telemetry)
     dataTransform2 = transformDataVoltas(Laps)
     arquivo = caminho / f'dados_silver_{place}_{year}.parquet'
