@@ -109,7 +109,7 @@ def savingData_Silver(year,place,quali):
     dataTransform = transformDataTelemetria(telemetry)
     dataTransform2 = transformDataVoltas(Laps)
     arquivo = caminho / f'dados_silver_{place}_{year}.parquet'
-    arquivo2 = caminho2 / f'dados_silver_{place}_{year}.parquet'
+    arquivo2 = caminho2 / f'dados_voltas_{place}_{year}.parquet'
     dataTransform.to_parquet(arquivo,index = False)
     dataTransform2.to_parquet(arquivo2,index = False)
    except FileNotFoundError:
