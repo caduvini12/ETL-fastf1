@@ -5,8 +5,8 @@ def readDatabase(year, place,quali):
 
  caminho = Path(__file__).parent / "bronze" / "telemetry" /f"year={year}" /f"place={place}" /f"quali={quali}"
  caminho2 = Path(__file__).parent / "bronze" / "Data_Laps" /f"year={year}" /f"place={place}" /f"quali={quali}"
- arquivo = caminho / f'dados_fastf1_{place}_{year}.parquet'
- arquivo2 = caminho2 / f'dados_voltas_{place}_{year}.parquet'
+ arquivo = caminho / f'dados_telemetry_bronze_{place}_{year}.parquet'
+ arquivo2 = caminho2 / f'dados_voltas_bronze_{place}_{year}.parquet'
  df = pd.read_parquet(arquivo,engine ='fastparquet')
  df2 = pd.read_parquet(arquivo2,engine = 'fastparquet')
 
@@ -128,19 +128,20 @@ def transformDataTelemetry(df):
     )
 
     return df
-def savingData_Silver(year,place,quali):
+def savingData_Silver(stage,year,place,quali):
    try:
-    caminho = Path(__file__).parent / "silver"/ "telemetry" /f'year={year}'/f'place={place}'/f'quali={quali}'
-    caminho2 = Path(__file__).parent / "silver" / "Data_Laps" /f"year={year}" /f"place={place}" /f"quali={quali}"
+    caminho = Path(__file__).parent / f"{stage}"/ "telemetry" /f'year={year}'/f'place={place}'/f'quali={quali}'
+    caminho2 = Path(__file__).parent / f"{stage}" / "Data_Laps" /f"year={year}" /f"place={place}" /f"quali={quali}"
     caminho.mkdir(parents=True,exist_ok=True)
+    caminho2.mkdir(parents=True,exist_ok=True)
     dados,dados1 = readDatabase(year, place, quali)
     dataTransform = transformDataTelemetry(dados)
     dataTransformlaps = transformDataLaps(dados1)
-    arquivo = caminho / f'dados_silver_{place}_{year}.parquet'
-    arquivo2 = caminho2 / f'dados_voltas_{place}_{year}.parquet'
+    arquivo = caminho / f'dados_telemetry_{stage}_{place}_{year}.parquet'
+    arquivo2 = caminho2 / f'dados_voltas_{stage}_{place}_{year}.parquet'
     dataTransformlaps.to_parquet(arquivo2,index=False)
     dataTransform.to_parquet(arquivo,index = False)
    except ValueError:
       print('Erro ao tentar salvar')
 
-savingData_Silver(2025, 'monaco','Q')
+savingData_Silver('silver',2025, 'monaco','Q')

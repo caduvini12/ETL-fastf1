@@ -34,16 +34,16 @@ def extractData (year, place, quali):
   
  if telemetry_list:
   df = pd.concat(telemetry_list, ignore_index = True)
-  arquivo = caminho / f'dados_fastf1_{place}_{year}.parquet'
+  arquivo = caminho / f'dados_telemetry_bronze_{place}_{year}.parquet'
   df.to_parquet(arquivo, index=False)
   df2 = pd.DataFrame(failad_laps)
   arquivo2 = caminho / f'voltas_sem_dados_{place}_{year}.csv'
   df2.to_csv(arquivo2, index=False)
 
   
-  arquivo3 = caminho2 / f'dados_voltas_{place}_{year}.parquet'
+  arquivo3 = caminho2 / f'dados_voltas_bronze_{place}_{year}.parquet'
   DataLaps_list.to_parquet(arquivo3, index=False)
 
   return df,failad_laps
 
-extractData(2025, 'monaco', 'Q')
+extractData('bronze',2025, 'monaco', 'Q')
