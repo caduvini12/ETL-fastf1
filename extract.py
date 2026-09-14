@@ -46,4 +46,4 @@ def extractData (year, place, quali):
 
   return df,failad_laps
 
-extractData('bronze',2025, 'monaco', 'Q')
+extractData(2025, 'monaco', 'Q')
