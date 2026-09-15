@@ -30,7 +30,7 @@ def transformDataLaps(df2):
     for coluna in colunas_tempo:
         if coluna in df2.columns:
             df2[coluna] = (
-                df2[coluna] / 1_000_000
+                df2[coluna] / 1_000_000_000
             ).round(3)
 
     # Renomeando as colunas
