@@ -144,5 +144,4 @@ def savingData_Silver(stage,year,place,quali):
    except ValueError:
       print('Erro ao tentar salvar')
 
-if __name__ == "__main__":
- savingData_Silver('silver',2025, 'monaco','Q')
+savingData_Silver('silver',2025, 'monaco','Q')

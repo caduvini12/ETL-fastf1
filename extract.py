@@ -46,5 +46,4 @@ def extractData (year, place, quali):
 
   return df,failad_laps
 
-if __name__ == "__main__":
- extractData(2025, 'monaco', 'Q')
+extractData(2025, 'monaco', 'Q')

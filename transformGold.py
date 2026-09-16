@@ -24,6 +24,6 @@ def savingGold(stage,year,place,quali):
     arquivo = caminho3 /f'dados_{stage}_{place}_{year}.parquet'
     dados.to_parquet(arquivo,index=False)
 
-if __name__ == "__main__":
- savingGold('gold',2025,'monaco','Q')
+
+savingGold('gold',2025,'monaco','Q')
 
