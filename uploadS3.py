@@ -33,4 +33,5 @@ def savingS3_gold(year,place,quali):
      Key=f'gold/year={year}/place={place}/quali={quali}/{arquivo.name}'
     )
 
-savingS3_gold(2025,'monaco','Q')
+if __name__ == "__main__":
+ savingS3_gold(2025,'monaco','Q')
