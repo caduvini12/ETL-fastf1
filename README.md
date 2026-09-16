@@ -12,15 +12,40 @@ Pipeline de engenharia de dados que extrai, transforma e organiza dados de telem
 
 ## Sumário
 
+- [Análise e validação dos dados](#análise-e-validação-dos-dados)
 - [Arquitetura](#arquitetura)
 - [Estrutura de pastas](#estrutura-de-pastas)
 - [Stack](#stack)
 - [Setup](#setup)
 - [Como rodar](#como-rodar)
 - [Orquestração com Airflow](#orquestração-com-airflow)
-- [Análise e validação dos dados](#análise-e-validação-dos-dados)
 - [Decisões de arquitetura e limitações conhecidas](#decisões-de-arquitetura-e-limitações-conhecidas)
 - [Roadmap](#roadmap)
+
+---
+
+## Análise e validação dos dados
+
+Um dos focos deste projeto foi garantir **corretude dos dados**, não apenas movê-los de um lugar para outro. Durante o desenvolvimento, identifiquei e corrigi:
+
+- **Inconsistência de unidade de tempo**: os campos de tempo retornados pelo FastF1 para dados de volta (`LapTime`, `Sector1Time`, etc.) estavam em nanossegundos, mas foram inicialmente tratados como microssegundos. A correção foi validada matematicamente: a soma dos três tempos de setor de cada volta bate exatamente com o tempo total da volta.
+- **Validação externa**: o menor tempo de volta identificado no dataset (`69.954s`, piloto NOR, Mônaco 2025) foi conferido contra reportagem factual — Lando Norris cravou a primeira volta abaixo de 70 segundos na história de Mônaco na qualificação de 2025, com tempo de 1m9.954s. Os números batem com precisão de milissegundo.
+
+**Insight obtido**: apesar de ter a volta mais rápida da sessão, o piloto NOR **não** teve a maior velocidade média (`VER` liderou essa métrica) — evidência de que, em Mônaco, eficiência de pilotagem em curva pesa mais que velocidade máxima de reta.
+
+### Velocidade média por piloto
+
+![Velocidade média por piloto](docs/images/velocidade_media_pilotos.png)
+
+O gráfico mostra a velocidade média de cada piloto ao longo da sessão de qualifying, considerando apenas voltas marcadas como válidas (`Volta_Precisa == True`, ou seja, sem interferência de bandeira amarela, tráfego ou erro de pilotagem que invalide a volta). `VER` lidera essa métrica — o que, à primeira vista, sugeriria que ele foi o piloto mais rápido da sessão.
+
+### NOR vs VER: velocidade não conta a história toda
+
+![Comparativo de velocidade entre NOR e VER](docs/images/comparativo_nor_ver.png)
+
+Comparando volta a volta a velocidade máxima de `NOR` e `VER`, fica claro que as duas curvas são muito próximas — não há uma diferença de performance de motor ou de reta que explicasse uma vantagem clara de um sobre o outro. E, no entanto, foi `NOR` quem cravou a volta mais rápida da sessão (`69.954s`), não `VER`.
+
+Isso reforça o que os números de tempo de volta já mostravam: em Mônaco, o fator decisivo não é velocidade máxima atingida, e sim **onde essa velocidade é aplicada** — frenagem tardia, saída de curva limpa e menos correção de volante em um circuito estreito, sem retas longas para compensar erro. É um contraponto interessante entre "quem é mais rápido no relógio" e "quem tem o carro/setup mais veloz" — a resposta não é sempre a mesma.
 
 ---
 
@@ -159,15 +184,6 @@ transfromSilver → transfromGold → SavingS3Bronze → SavingS3Silver → Savi
 ```
 
 **A extração (bronze) roda fora da DAG, de forma manual.** Isso é uma decisão de arquitetura consciente, não uma limitação não resolvida: a API do FastF1 não responde corretamente a partir do ambiente de nuvem (GitHub Codespaces) usado para desenvolver este projeto — provavelmente por restrição de rede/IP em ambientes de datacenter. A extração é executada localmente, e os dados de bronze resultantes alimentam o restante do pipeline orquestrado.
-
-## Análise e validação dos dados
-
-Um dos focos deste projeto foi garantir **corretude dos dados**, não apenas movê-los de um lugar para outro. Durante o desenvolvimento, identifiquei e corrigi:
-
-- **Inconsistência de unidade de tempo**: os campos de tempo retornados pelo FastF1 para dados de volta (`LapTime`, `Sector1Time`, etc.) estavam em nanossegundos, mas foram inicialmente tratados como microssegundos. A correção foi validada matematicamente: a soma dos três tempos de setor de cada volta bate exatamente com o tempo total da volta.
-- **Validação externa**: o menor tempo de volta identificado no dataset (`69.954s`, piloto NOR, Mônaco 2025) foi conferido contra reportagem factual — Lando Norris cravou a primeira volta abaixo de 70 segundos na história de Mônaco na qualificação de 2025, com tempo de 1m9.954s. Os números batem com precisão de milissegundo.
-
-**Insight obtido**: apesar de ter a volta mais rápida da sessão, o piloto NOR **não** teve a maior velocidade média (`VER` liderou essa métrica) — evidência de que, em Mônaco, eficiência de pilotagem em curva pesa mais que velocidade máxima de reta.
 
 ## Decisões de arquitetura e limitações conhecidas
 
