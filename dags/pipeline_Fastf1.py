@@ -4,7 +4,7 @@ from transformData import savingData_Silver
 from transformGold import savingGold
 from uploadS3 import savingS3_gold, savingS3_stage
 
-
+#uso das dags para importação e uso do pipeline
 @dag(
     dag_id='dag_fastf1_pipeline',
     start_date=datetime(2026,1,1),
